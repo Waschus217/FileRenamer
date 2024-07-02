@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace renamerIdee {
     class Matcher {
@@ -41,8 +42,45 @@ namespace renamerIdee {
             Console.BackgroundColor = ConsoleColor.Green;
             Console.WriteLine("All tests succeeded!");
             Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine("----------------------------");
+            Console.WriteLine("RUNNING NOW FILE RENAMER...");
+            Console.WriteLine("----------------------------");
+            algorithmRenamePictureFiles();
             Console.ReadKey();
+        }
 
+        public static void algorithmRenamePictureFiles()
+        {
+            string directoryPath = @"C:\Users\aopitz\OneDrive - adesso Group\Schule\[5] BFK-S\Visual Studio\FileRenamerProjectPictures"; // Bevor ihr den FileRenamer ausführt eure Bilder in einem Ordner tun und Pfad ändern.
+            string fileExtension = "*.jpg";
+            string newFileNamePattern = "img";
+
+            try
+            {
+                var files = Directory.GetFiles(directoryPath, fileExtension);
+
+                if (files.Length == 0)
+                {
+                    Console.WriteLine("Keine Dateien im angegebenen Ordner gefunden.");
+                    return;
+                }
+
+                for (int i = 0; i < files.Length; i++)
+                {
+                    string currentFilePath = files[i];
+                    string newFileName = $"{(i + 1):D3}-{newFileNamePattern}.jpg";
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                    File.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                }
+
+                Console.WriteLine("Alle Dateien wurden erfolgreich umbenannt.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ein Fehler ist aufgetreten: {ex.Message}");
+            }
         }
 
         private static void test(string[] files, string oldName, string newName, string testRes = null) {
