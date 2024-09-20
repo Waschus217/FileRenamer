@@ -51,7 +51,9 @@ namespace renamerIdee {
 
         public static void algorithmRenamePictureFiles()
         {
-            string directoryPath = @"C:\Users\aopitz\OneDrive - adesso Group\Schule\[5] BFK-S\Visual Studio\FileRenamerProjectPictures"; // Bevor ihr den FileRenamer ausführt eure Bilder in einem Ordner tun und Pfad ändern.
+            Console.Write("Pfad: ");
+            string pathInput = Console.ReadLine();
+            string directoryPath = $@"{pathInput}"; // Bevor ihr den FileRenamer ausführt eure Bilder in einem Ordner tun und Pfad ändern.
             string fileExtension = "*.jpg";
             string newFileNamePattern = "img";
 
