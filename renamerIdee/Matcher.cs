@@ -8,7 +8,6 @@ using System.IO;
 namespace renamerIdee {
     class Matcher {
         static string VERSION = "V1.0";
-
         /// <summary>
         /// 
         /// </summary>
@@ -45,7 +44,7 @@ namespace renamerIdee {
             Console.WriteLine("----------------------------");
             Console.WriteLine("RUNNING NOW FILE RENAMER...");
             Console.WriteLine("----------------------------");
-            algorithmRenamePictureFiles();
+            Algorithmus.algorithmRenamePictureFiles();
             Console.ReadKey();
         }
 
@@ -54,23 +53,28 @@ namespace renamerIdee {
             Console.Write("Pfad: ");
             string pathInput = Console.ReadLine();
             string directoryPath = $@"{pathInput}"; // Bevor ihr den FileRenamer ausführt eure Bilder in einem Ordner tun und Pfad ändern.
-            string fileExtension = "*.jpg";
+            string[] fileExtensions = new string[] { "*.jpg", "*.png" };
             string newFileNamePattern = "img";
 
             try
             {
-                var files = Directory.GetFiles(directoryPath, fileExtension);
+                List<string> files = new List<string>();
+                foreach (var fileExtension in fileExtensions)
+                {
+                    files.AddRange(Directory.GetFiles(directoryPath, fileExtension));
+                }
 
-                if (files.Length == 0)
+                if (files.Count == 0)
                 {
                     Console.WriteLine("Keine Dateien im angegebenen Ordner gefunden.");
                     return;
                 }
 
-                for (int i = 0; i < files.Length; i++)
+                for (int i = 0; i < files.Count; i++)
                 {
                     string currentFilePath = files[i];
-                    string newFileName = $"{(i + 1):D3}-{newFileNamePattern}.jpg";
+                    string extension = Path.GetExtension(currentFilePath);
+                    string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
                     string newFilePath = Path.Combine(directoryPath, newFileName);
 
                     File.Move(currentFilePath, newFilePath);
@@ -96,7 +100,6 @@ namespace renamerIdee {
                 throw new Exception("Test failed: expected:" + testRes + " received:" + resS);
             }
         }
-
 
         public static void Main(string[] args) {
             int RUN_DEBUG = 1;
