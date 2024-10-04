@@ -25,7 +25,6 @@ namespace renamerIdee {
                 return;
             }
 
-
             //
             //run real renamer 
             //
