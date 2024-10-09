@@ -7,6 +7,25 @@ using System.IO;
 
 namespace renamerIdee {
     class Matcher {
+        public static void Main(string[] args)
+        {
+            int RUN_DEBUG = 1;
+
+            if (RUN_DEBUG == 1)
+            {
+                RunTests();
+                Console.ReadKey();
+                return;
+            }
+
+            //
+            // work on matcher...
+            //
+
+            Console.WriteLine("ToDo: current work on matcher...");
+            Console.ReadKey();
+        }
+
         static string VERSION = "V1.0";
         /// <summary>
         /// 
@@ -59,23 +78,5 @@ namespace renamerIdee {
                 throw new Exception("Test failed: expected:" + testRes + " received:" + resS);
             }
         }
-
-        public static void Main(string[] args) {
-            int RUN_DEBUG = 1;
-
-            if (RUN_DEBUG == 1) {
-                RunTests();
-                Console.ReadKey();
-                return;
-            }
-
-            //
-            // work on matcher...
-            //
-
-            Console.WriteLine("ToDo: current work on matcher...");
-            Console.ReadKey();
-        }
-
     }
 }
