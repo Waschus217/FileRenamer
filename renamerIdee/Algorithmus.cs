@@ -13,6 +13,7 @@ namespace renamerIdee
         {
             Console.WriteLine("Auswahlmöglichkeiten:");
             Console.WriteLine("(1) Präfix ändern");
+            Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
             Console.Write("Pfad: ");
             string pathInput = Console.ReadLine();
