@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace renamerIdee
 {
@@ -38,16 +39,7 @@ namespace renamerIdee
                 switch (choiceOption)
                 {
                     case 1:
-                        for (int i = 0; i < files.Count; i++)
-                        {
-                            string currentFilePath = files[i];
-                            string extension = Path.GetExtension(currentFilePath);
-                            string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
-                            string newFilePath = Path.Combine(directoryPath, newFileName);
-
-                            File.Move(currentFilePath, newFilePath);
-                            Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
-                        }
+                        ChangePrefix(files, newFileNamePattern, directoryPath);
 
                         break;
 
@@ -60,6 +52,20 @@ namespace renamerIdee
             catch (Exception ex)
             {
                 Console.WriteLine($"Ein Fehler ist aufgetreten: {ex.Message}");
+            }
+        }
+
+        public static void ChangePrefix(List<string> files, string newFileNamePattern, string directoryPath)
+        {
+            for (int i = 0; i < files.Count; i++)
+            {
+                string currentFilePath = files[i];
+                string extension = Path.GetExtension(currentFilePath);
+                string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
+                string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                System.IO.File.Move(currentFilePath, newFilePath);
+                Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
             }
         }
     }
