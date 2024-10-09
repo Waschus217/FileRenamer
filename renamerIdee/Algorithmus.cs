@@ -9,7 +9,7 @@ namespace renamerIdee
 {
     class Algorithmus
     {
-        public static void algorithmRenamePictureFiles()
+        public static void AlgorithmRenamePictureFiles()
         {
             Console.Write("Pfad: ");
             string pathInput = Console.ReadLine();
