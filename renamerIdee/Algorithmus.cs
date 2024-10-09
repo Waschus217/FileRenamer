@@ -12,18 +12,19 @@ namespace renamerIdee
     {
         public static void AlgorithmRenamePictureFiles()
         {
-            Console.WriteLine("Auswahlmöglichkeiten:");
+            Console.Write("Pfad: ");
+            string pathInput = Console.ReadLine();
+            string directoryPath = $@"{pathInput}";
+            Console.WriteLine("\nAuswahlmöglichkeiten:");
             Console.WriteLine("(1) Präfixe ändern");
             Console.WriteLine("(2) Präfixe löschen");
             Console.WriteLine("(3) Suffixe ändern");
-            Console.WriteLine("(4) Teilausdrücke ändern");
+            Console.WriteLine("(4) Suffix löschen");
+            Console.WriteLine("(5) Teilausdrücke ändern");
             Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Pfad: ");
-            string pathInput = Console.ReadLine();
-            string directoryPath = $@"{pathInput}"; // Bevor ihr den FileRenamer ausführt eure Bilder in einem Ordner tun und Pfad ändern.
             string[] fileExtensions = new string[] { "*.*" };
-            string newFileNamePattern = "img";
+            
 
             try
             {
@@ -42,25 +43,30 @@ namespace renamerIdee
                 switch (choiceOption)
                 {
                     case 1:
+                        Console.Write("\nNeuer File Name: ");
+                        string newFileNamePattern = Console.ReadLine();
                         ChangePrefix(files, newFileNamePattern, directoryPath);
                         break;
                     case 2:
                         RemovePrefix(files, directoryPath);
                         break;
                     case 3:
-                        Console.Write("Gib das neue Suffix ein: ");
+                        Console.Write("\nGib das neue Suffix ein: ");
                         string newSuffix = Console.ReadLine();
                         ChangeSuffix(files, newSuffix, directoryPath);
                         break;
                     case 4:
-                        Console.Write("Gib den Teilausdruck ein, den du ändern möchtest: ");
+                        RemoveSuffix(files, directoryPath);
+                        break;
+                    case 5:
+                        Console.Write("\nGib den Teilausdruck ein, den du ändern möchtest: ");
                         string oldSubstring = Console.ReadLine();
                         Console.Write("Gib den neuen Teilausdruck ein: ");
                         string newSubstring = Console.ReadLine();
-                        ChangeSubstring(files, oldSubstring, newSubstring, directoryPath);
+                        ChangePartialExpression(files, oldSubstring, newSubstring, directoryPath);
                         break;
                     default:
-                        Console.WriteLine("!!!Ungültige Eingabe!!!");
+                        Console.WriteLine("\n!!!Ungültige Eingabe!!!");
                         break;
                 }
             }
@@ -83,7 +89,7 @@ namespace renamerIdee
                 Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
             }
             
-            Console.WriteLine("Alle Präfixe wurden erfolgreich geändert.");
+            Console.WriteLine("\nAlle Präfixe wurden erfolgreich geändert.");
         }
 
         public static void RemovePrefix(List<string> files, string directoryPath)
@@ -115,7 +121,7 @@ namespace renamerIdee
                 }
             }
 
-            Console.WriteLine("Alle Präfixe wurden erfolgreich entfernt.");
+            Console.WriteLine("\nAlle Präfixe wurden erfolgreich entfernt.");
         }
 
         public static void ChangeSuffix(List<string> files, string newSuffix, string directoryPath)
@@ -130,10 +136,29 @@ namespace renamerIdee
                 Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
             }
 
-            Console.WriteLine("Alle Suffixe wurden erfolgreich geändert.");
+            Console.WriteLine("\nAlle Suffixe wurden erfolgreich geändert.");
         }
 
-        public static void ChangeSubstring(List<string> files, string oldSubstring, string newSubstring, string directoryPath)
+        public static void RemoveSuffix(List<string> files, string directoryPath)
+        {
+            foreach (var file in files)
+            {
+                string currentFilePath = file;
+                string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+
+                string newFilePath = Path.Combine(directoryPath, currentFileName);
+
+                if (currentFileName + Path.GetExtension(currentFilePath) != currentFileName)
+                {
+                    System.IO.File.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Suffix entfernt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
+                }
+            }
+
+            Console.WriteLine("\nAlle Suffixe wurden erfolgreich entfernt.");
+        }
+
+        public static void ChangePartialExpression(List<string> files, string oldSubstring, string newSubstring, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -151,7 +176,7 @@ namespace renamerIdee
                 }
             }
 
-            Console.WriteLine("Alle Teilausdrücke wurden erfolgreich geändert.");
+            Console.WriteLine("\nAlle Teilausdrücke wurden erfolgreich geändert.");
         }
     }
 }
