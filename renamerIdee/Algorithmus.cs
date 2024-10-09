@@ -14,7 +14,7 @@ namespace renamerIdee
             Console.Write("Pfad: ");
             string pathInput = Console.ReadLine();
             string directoryPath = $@"{pathInput}"; // Bevor ihr den FileRenamer ausführt eure Bilder in einem Ordner tun und Pfad ändern.
-            string[] fileExtensions = new string[] { "*.jpg", "*.png" };
+            string[] fileExtensions = new string[] { "*.jpg", "*.png", "*.gif" };
             string newFileNamePattern = "img";
 
             try
