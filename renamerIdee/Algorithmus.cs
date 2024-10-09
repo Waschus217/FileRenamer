@@ -11,6 +11,9 @@ namespace renamerIdee
     {
         public static void AlgorithmRenamePictureFiles()
         {
+            Console.WriteLine("Auswahlmöglichkeiten:");
+            Console.WriteLine("(1) Präfix ändern");
+            int choiceOption = Convert.ToInt32(Console.ReadLine());
             Console.Write("Pfad: ");
             string pathInput = Console.ReadLine();
             string directoryPath = $@"{pathInput}"; // Bevor ihr den FileRenamer ausführt eure Bilder in einem Ordner tun und Pfad ändern.
@@ -31,15 +34,24 @@ namespace renamerIdee
                     return;
                 }
 
-                for (int i = 0; i < files.Count; i++)
+                switch (choiceOption)
                 {
-                    string currentFilePath = files[i];
-                    string extension = Path.GetExtension(currentFilePath);
-                    string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
-                    string newFilePath = Path.Combine(directoryPath, newFileName);
+                    case 1:
+                        for (int i = 0; i < files.Count; i++)
+                        {
+                            string currentFilePath = files[i];
+                            string extension = Path.GetExtension(currentFilePath);
+                            string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
+                            string newFilePath = Path.Combine(directoryPath, newFileName);
 
-                    File.Move(currentFilePath, newFilePath);
-                    Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                            File.Move(currentFilePath, newFilePath);
+                            Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                        }
+
+                        break;
+
+                    default: 
+                        break;
                 }
 
                 Console.WriteLine("Alle Dateien wurden erfolgreich umbenannt.");
