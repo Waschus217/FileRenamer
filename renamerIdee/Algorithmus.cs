@@ -15,6 +15,7 @@ namespace renamerIdee
             Console.WriteLine("Auswahlmöglichkeiten:");
             Console.WriteLine("(1) Präfixe ändern");
             Console.WriteLine("(2) Suffixe ändern");
+            Console.WriteLine("(3) Teilausdrücke ändern");
             Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
             Console.Write("Pfad: ");
@@ -47,6 +48,13 @@ namespace renamerIdee
                         string newSuffix = Console.ReadLine();
                         ChangeSuffix(files, newSuffix, directoryPath);
                         break;
+                    case 3:
+                        Console.Write("Gib den Teilausdruck ein, den du ändern möchtest: ");
+                        string oldSubstring = Console.ReadLine();
+                        Console.Write("Gib den neuen Teilausdruck ein: ");
+                        string newSubstring = Console.ReadLine();
+                        ChangeSubstring(files, oldSubstring, newSubstring, directoryPath);
+                        break;
                     default:
                         Console.WriteLine("!!!Ungültige Eingabe!!!");
                         break;
@@ -69,9 +77,9 @@ namespace renamerIdee
 
                 System.IO.File.Move(currentFilePath, newFilePath);
                 Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
-
-                Console.WriteLine("Alle Präfixe wurden erfolgreich geändert.");
             }
+            
+            Console.WriteLine("Alle Präfixe wurden erfolgreich geändert.");
         }
 
         public static void ChangeSuffix(List<string> files, string newSuffix, string directoryPath)
@@ -87,6 +95,27 @@ namespace renamerIdee
             }
 
             Console.WriteLine("Alle Suffixe wurden erfolgreich geändert.");
+        }
+
+        public static void ChangeSubstring(List<string> files, string oldSubstring, string newSubstring, string directoryPath)
+        {
+            foreach (var file in files)
+            {
+                string currentFilePath = file;
+                string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string extension = Path.GetExtension(currentFilePath);
+
+                string newFileName = currentFileName.Replace(oldSubstring, newSubstring) + extension;
+                string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                if (newFileName != Path.GetFileName(currentFilePath))
+                {
+                    System.IO.File.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                }
+            }
+
+            Console.WriteLine("Alle Teilausdrücke wurden erfolgreich geändert.");
         }
     }
 }
