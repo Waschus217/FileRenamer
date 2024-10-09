@@ -21,6 +21,7 @@ namespace renamerIdee
             Console.WriteLine("(3) Suffixe ändern");
             Console.WriteLine("(4) Suffix löschen");
             Console.WriteLine("(5) Teilausdrücke ändern");
+            Console.WriteLine("(6) Zahlenblock verschieben");
             Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
             string[] fileExtensions = new string[] { "*.*" };
@@ -36,7 +37,7 @@ namespace renamerIdee
 
                 if (files.Count == 0)
                 {
-                    Console.WriteLine("Keine Dateien im angegebenen Ordner gefunden.");
+                    Console.WriteLine("\nKeine Dateien im angegebenen Ordner gefunden.");
                     return;
                 }
 
@@ -65,6 +66,9 @@ namespace renamerIdee
                         string newSubstring = Console.ReadLine();
                         ChangePartialExpression(files, oldSubstring, newSubstring, directoryPath);
                         break;
+                    case 6:
+                        ShiftNumberBlock(files, directoryPath);
+                        break;
                     default:
                         Console.WriteLine("\n!!!Ungültige Eingabe!!!");
                         break;
@@ -72,7 +76,7 @@ namespace renamerIdee
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ein Fehler ist aufgetreten: {ex.Message}");
+                Console.WriteLine($"\nEin Fehler ist aufgetreten: {ex.Message}");
             }
         }
 
@@ -177,6 +181,37 @@ namespace renamerIdee
             }
 
             Console.WriteLine("\nAlle Teilausdrücke wurden erfolgreich geändert.");
+        }
+
+        public static void ShiftNumberBlock(List<string> files, string directoryPath)
+        {
+            foreach (var file in files)
+            {
+                string currentFilePath = file;
+                string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string extension = Path.GetExtension(currentFilePath);
+
+                string[] parts = currentFileName.Split('-');
+
+                if (parts.Length > 0 && int.TryParse(parts[1], out int numberBlock))
+                {
+                    string newFileName = $"{numberBlock:D3}-" + string.Join("-", parts, 0, parts.Length - 1) + extension;
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                    System.IO.File.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                }
+                else if (parts.Length > 0 && int.TryParse(parts[0], out numberBlock))
+                {
+                    string newFileName = $"{string.Join("-", parts, 1, parts.Length - 1)}-{numberBlock:D3}{extension}";
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                    System.IO.File.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                }
+            }
+
+            Console.WriteLine("\nAlle Zahlenblöcke wurden erfolgreich verschoben.");
         }
     }
 }
