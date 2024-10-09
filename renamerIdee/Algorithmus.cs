@@ -13,7 +13,8 @@ namespace renamerIdee
         public static void AlgorithmRenamePictureFiles()
         {
             Console.WriteLine("Auswahlmöglichkeiten:");
-            Console.WriteLine("(1) Präfix ändern");
+            Console.WriteLine("(1) Präfixe ändern");
+            Console.WriteLine("(2) Suffixe ändern");
             Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
             Console.Write("Pfad: ");
@@ -40,14 +41,16 @@ namespace renamerIdee
                 {
                     case 1:
                         ChangePrefix(files, newFileNamePattern, directoryPath);
-
                         break;
-
-                    default: 
+                    case 2:
+                        Console.Write("Gib das neue Suffix ein: ");
+                        string newSuffix = Console.ReadLine();
+                        ChangeSuffix(files, newSuffix, directoryPath);
+                        break;
+                    default:
+                        Console.WriteLine("!!!Ungültige Eingabe!!!");
                         break;
                 }
-
-                Console.WriteLine("Alle Dateien wurden erfolgreich umbenannt.");
             }
             catch (Exception ex)
             {
@@ -66,7 +69,24 @@ namespace renamerIdee
 
                 System.IO.File.Move(currentFilePath, newFilePath);
                 Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+
+                Console.WriteLine("Alle Präfixe wurden erfolgreich geändert.");
             }
+        }
+
+        public static void ChangeSuffix(List<string> files, string newSuffix, string directoryPath)
+        {
+            foreach (var file in files)
+            {
+                string currentFilePath = file;
+                string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string newFilePath = Path.Combine(directoryPath, currentFileName + newSuffix);
+
+                System.IO.File.Move(currentFilePath, newFilePath);
+                Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
+            }
+
+            Console.WriteLine("Alle Suffixe wurden erfolgreich geändert.");
         }
     }
 }
