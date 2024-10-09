@@ -14,8 +14,9 @@ namespace renamerIdee
         {
             Console.WriteLine("Auswahlmöglichkeiten:");
             Console.WriteLine("(1) Präfixe ändern");
-            Console.WriteLine("(2) Suffixe ändern");
-            Console.WriteLine("(3) Teilausdrücke ändern");
+            Console.WriteLine("(2) Präfixe löschen");
+            Console.WriteLine("(3) Suffixe ändern");
+            Console.WriteLine("(4) Teilausdrücke ändern");
             Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
             Console.Write("Pfad: ");
@@ -44,11 +45,14 @@ namespace renamerIdee
                         ChangePrefix(files, newFileNamePattern, directoryPath);
                         break;
                     case 2:
+                        RemovePrefix(files, directoryPath);
+                        break;
+                    case 3:
                         Console.Write("Gib das neue Suffix ein: ");
                         string newSuffix = Console.ReadLine();
                         ChangeSuffix(files, newSuffix, directoryPath);
                         break;
-                    case 3:
+                    case 4:
                         Console.Write("Gib den Teilausdruck ein, den du ändern möchtest: ");
                         string oldSubstring = Console.ReadLine();
                         Console.Write("Gib den neuen Teilausdruck ein: ");
@@ -80,6 +84,38 @@ namespace renamerIdee
             }
             
             Console.WriteLine("Alle Präfixe wurden erfolgreich geändert.");
+        }
+
+        public static void RemovePrefix(List<string> files, string directoryPath)
+        {
+            foreach (var file in files)
+            {
+                string currentFilePath = file;
+                string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string extension = Path.GetExtension(currentFilePath);
+
+                int indexOfDash = currentFileName.IndexOf('-');
+                string newFileName;
+
+                if (indexOfDash != -1)
+                {
+                    newFileName = currentFileName.Substring(indexOfDash + 1) + extension;
+                }
+                else
+                {
+                    newFileName = currentFileName + extension;
+                }
+
+                string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                if (newFileName != Path.GetFileName(currentFilePath))
+                {
+                    System.IO.File.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Präfix entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                }
+            }
+
+            Console.WriteLine("Alle Präfixe wurden erfolgreich entfernt.");
         }
 
         public static void ChangeSuffix(List<string> files, string newSuffix, string directoryPath)
