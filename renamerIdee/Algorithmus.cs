@@ -2,12 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security;
+using System.Text.RegularExpressions;
 
 namespace renamerIdee
 {
     public class Algorithmus
     {
         private readonly IFileMover _fileMover;
+        int foundNumbers;
+        string newFileName, newFilePath;
+        bool verfiy;
 
         public Algorithmus(IFileMover fileMover)
         {
@@ -90,9 +96,11 @@ namespace renamerIdee
                             RemoveLeadingZeros(files, directoryPath);
                             break;
                         case 9:
-                            Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest (z.B. 123): ");
+                            Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest: ");
                             int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
-                            AddNumberBlock(files, numberBlockToAdd, directoryPath);
+                            Console.Write("\nMöchtest du den Zahlenblock vorne (1) oder hinten (2): ");
+                            int numberBlockPosition = Convert.ToInt32(Console.ReadLine());
+                            AddNumberBlock(files, numberBlockToAdd, numberBlockPosition, directoryPath);
                             break;
                         case 10:
                             RemoveNumberBlock(files, directoryPath);
@@ -132,7 +140,7 @@ namespace renamerIdee
             {
                 string currentFilePath = files[i];
                 string extension = Path.GetExtension(currentFilePath);
-                string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
+                string newFileName = $"{newFileNamePattern}{i + 1}{extension}";
                 string newFilePath = Path.Combine(directoryPath, newFileName);
 
                 if (newFileName != Path.GetFileName(currentFilePath))
@@ -351,7 +359,7 @@ namespace renamerIdee
             Console.WriteLine("\nFührende Nullen wurden erfolgreich entfernt.");
         }
 
-        public static void AddNumberBlock(List<string> files, int numberBlock, string directoryPath)
+        public void AddNumberBlock(List<string> files, int numberBlock, int numberBlockPosition, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -359,12 +367,33 @@ namespace renamerIdee
                 string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
                 string extension = Path.GetExtension(currentFilePath);
 
-                string newFileName = $"{currentFileName}-{numberBlock:D3}{extension}";
-                string newFilePath = Path.Combine(directoryPath, newFileName);
+                string pattern = @"\d+";
+                Match match = Regex.Match(currentFileName, pattern);
 
-                if (newFileName != Path.GetFileName(currentFilePath))
+                if (match.Success)
                 {
-                    System.IO.File.Move(currentFilePath, newFilePath);
+                    foundNumbers = Convert.ToInt32(match.Value);
+                    verfiy = Convert.ToInt32(foundNumbers) != numberBlock;
+                }
+                else
+                {
+                    verfiy = true;
+                }
+
+                if (numberBlockPosition == 1 && verfiy)
+                {
+                    newFileName = $"{numberBlock}-{currentFileName}{extension}";
+                    newFilePath = Path.Combine(directoryPath, newFileName);
+                }
+                else if (numberBlockPosition == 2 && verfiy)
+                {
+                    newFileName = $"{currentFileName}-{numberBlock}{extension}";
+                    newFilePath = Path.Combine(directoryPath, newFileName);
+                }
+
+                if (newFileName != Path.GetFileName(currentFilePath) && !String.IsNullOrEmpty(newFileName))
+                {
+                    _fileMover.Move(currentFilePath, newFilePath);
                     Console.WriteLine($"Zahlenblock hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                 }
             }
@@ -372,7 +401,7 @@ namespace renamerIdee
             Console.WriteLine("\nZahlenblock wurde erfolgreich hinzugefügt.");
         }
 
-        public static void RemoveNumberBlock(List<string> files, string directoryPath)
+        public void RemoveNumberBlock(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -389,7 +418,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Zahlenblock entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }

@@ -25,17 +25,17 @@ namespace FileRenamerTests.AlogrithmusTests
 
             fileMoverMock.Verify(f => f.Move(
                 It.Is<string>(src => src == @"C:\Test\file1.jpg"),
-                It.Is<string>(dest => dest == @"C:\Test\001-test.jpg")
+                It.Is<string>(dest => dest == @"C:\Test\test1.jpg")
             ), Times.Once);
 
             fileMoverMock.Verify(f => f.Move(
                 It.Is<string>(src => src == @"C:\Test\file2.gif"),
-                It.Is<string>(dest => dest == @"C:\Test\002-test.gif")
+                It.Is<string>(dest => dest == @"C:\Test\test2.gif")
             ), Times.Once);
 
             fileMoverMock.Verify(f => f.Move(
                 It.Is<string>(src => src == @"C:\Test\file3.png"),
-                It.Is<string>(dest => dest == @"C:\Test\003-test.png")
+                It.Is<string>(dest => dest == @"C:\Test\test3.png")
             ), Times.Once);
         }
 
@@ -44,7 +44,7 @@ namespace FileRenamerTests.AlogrithmusTests
         {
             var files = new List<string>
             {
-                @"C:\Test\001-test.jpg",
+                @"C:\Test\test1.jpg",
                 @"C:\Test\file2.gif",
                 @"C:\Test\file3.png"
             };
@@ -56,18 +56,18 @@ namespace FileRenamerTests.AlogrithmusTests
             algorithmus.ChangePrefix(files, newNamePattern, directoryPath);
 
             fileMoverMock.Verify(f => f.Move(
-                It.Is<string>(src => src == @"C:\Test\001-test.jpg"),
+                It.Is<string>(src => src == @"C:\Test\test1.jpg"),
                 It.IsAny<string>()
             ), Times.Never);
 
             fileMoverMock.Verify(f => f.Move(
                 It.Is<string>(src => src == @"C:\Test\file2.gif"),
-                It.Is<string>(dest => dest == @"C:\Test\002-test.gif")
+                It.Is<string>(dest => dest == @"C:\Test\test2.gif")
             ), Times.Once);
 
             fileMoverMock.Verify(f => f.Move(
                 It.Is<string>(src => src == @"C:\Test\file3.png"),
-                It.Is<string>(dest => dest == @"C:\Test\003-test.png")
+                It.Is<string>(dest => dest == @"C:\Test\test3.png")
             ), Times.Once);
         }
 
@@ -76,8 +76,8 @@ namespace FileRenamerTests.AlogrithmusTests
         {
             var files = new List<string>
             {
-                @"C:\Test\001-test.jpg",
-                @"C:\Test\002-test.gif",
+                @"C:\Test\test1.jpg",
+                @"C:\Test\test2.gif",
                 @"C:\Test\file3.png"
             };
             var newNamePattern = "test";
@@ -88,18 +88,18 @@ namespace FileRenamerTests.AlogrithmusTests
             algorithmus.ChangePrefix(files, newNamePattern, directoryPath);
 
             fileMoverMock.Verify(f => f.Move(
-                It.Is<string>(src => src == @"C:\Test\001-test.jpg"),
+                It.Is<string>(src => src == @"C:\Test\test1.jpg"),
                 It.IsAny<string>()
             ), Times.Never);
 
             fileMoverMock.Verify(f => f.Move(
-                It.Is<string>(src => src == @"C:\Test\002-test.gif"),
+                It.Is<string>(src => src == @"C:\Test\test2.gif"),
                 It.IsAny<string>()
             ), Times.Never);
 
             fileMoverMock.Verify(f => f.Move(
                 It.Is<string>(src => src == @"C:\Test\file3.png"),
-                It.Is<string>(dest => dest == @"C:\Test\003-test.png")
+                It.Is<string>(dest => dest == @"C:\Test\test3.png")
             ), Times.Once);
         }
 
@@ -108,9 +108,9 @@ namespace FileRenamerTests.AlogrithmusTests
         {
             var files = new List<string>
             {
-                @"C:\Test\001-test.jpg",
-                @"C:\Test\002-test.gif",
-                @"C:\Test\003-test.png"
+                @"C:\Test\test1.jpg",
+                @"C:\Test\test2.gif",
+                @"C:\Test\test3.png"
             };
             var newNamePattern = "test";
             var directoryPath = @"C:\Test";
@@ -120,17 +120,17 @@ namespace FileRenamerTests.AlogrithmusTests
             algorithmus.ChangePrefix(files, newNamePattern, directoryPath);
 
             fileMoverMock.Verify(f => f.Move(
-                It.Is<string>(src => src == @"C:\Test\001-test.jpg"),
+                It.Is<string>(src => src == @"C:\Test\test1.jpg"),
                 It.IsAny<string>()
             ), Times.Never);
 
             fileMoverMock.Verify(f => f.Move(
-                It.Is<string>(src => src == @"C:\Test\002-test.gif"),
+                It.Is<string>(src => src == @"C:\Test\test2.gif"),
                 It.IsAny<string>()
             ), Times.Never);
 
             fileMoverMock.Verify(f => f.Move(
-                It.Is<string>(src => src == @"C:\Test\003-test.png"),
+                It.Is<string>(src => src == @"C:\Test\test3.png"),
                 It.IsAny<string>()
             ), Times.Never);
         }
