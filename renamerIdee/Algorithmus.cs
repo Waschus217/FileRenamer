@@ -177,16 +177,20 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Präfixe wurden erfolgreich entfernt.");
         }
 
-        public static void ChangeSuffix(List<string> files, string newSuffix, string directoryPath)
+        public void ChangeSuffix(List<string> files, string newSuffix, string directoryPath)
         {
             foreach (var file in files)
             {
                 string currentFilePath = file;
                 string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string newFileName = $"{currentFileName}{newSuffix}";
                 string newFilePath = Path.Combine(directoryPath, currentFileName + newSuffix);
 
-                System.IO.File.Move(currentFilePath, newFilePath);
-                Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
+                if (newFileName != Path.GetFileName(currentFilePath))
+                {
+                    _fileMover.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
+                }
             }
 
             Console.WriteLine("\nAlle Suffixe wurden erfolgreich geändert.");
