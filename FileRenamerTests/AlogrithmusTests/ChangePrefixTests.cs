@@ -1,8 +1,5 @@
 using renamerIdee;
 using Moq;
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using renamerIdee.Interfaces;
 
 namespace FileRenamerTests.AlogrithmusTests
