@@ -422,6 +422,17 @@ namespace renamerIdee
                         Console.WriteLine($"Zahlenblock entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
+                else if (parts.Length > 0 && int.TryParse(parts[0], out numberBlock))
+                {
+                    string newFileName = string.Join("-", parts, 1, parts.Length - 1) + extension;
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        _fileMover.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Zahlenblock entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
+                }
             }
 
             Console.WriteLine("\nZahlenblöcke wurden erfolgreich entfernt.");
