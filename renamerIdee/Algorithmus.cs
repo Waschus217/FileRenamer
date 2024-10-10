@@ -135,8 +135,11 @@ namespace renamerIdee
                 string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
                 string newFilePath = Path.Combine(directoryPath, newFileName);
 
-                _fileMover.Move(currentFilePath, newFilePath);
-                Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                if (newFileName != Path.GetFileName(currentFilePath))
+                {
+                    _fileMover.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                }
             }
             
             Console.WriteLine("\nAlle Präfixe wurden erfolgreich geändert.");
