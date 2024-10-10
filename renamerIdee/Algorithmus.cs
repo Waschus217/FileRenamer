@@ -12,91 +12,113 @@ namespace renamerIdee
     {
         public static void AlgorithmRenamePictureFiles()
         {
-            Console.Write("Pfad: ");
-            string pathInput = Console.ReadLine();
-            string directoryPath = $@"{pathInput}";
-            Console.WriteLine("\nAuswahlmöglichkeiten:");
-            Console.WriteLine("(1) Präfixe ändern");
-            Console.WriteLine("(2) Präfixe löschen");
-            Console.WriteLine("(3) Suffixe ändern");
-            Console.WriteLine("(4) Suffix löschen");
-            Console.WriteLine("(5) Teilausdrücke ändern");
-            Console.WriteLine("(6) Zahlenblock verschieben");
-            Console.WriteLine("(7) Führende Nullen einfügen");
-            Console.WriteLine("(8) Führende Nullen löschen");
-            Console.WriteLine("(9) Zahlenblock einfügen");
-            Console.WriteLine("(10) Zahlenblock löschen");
-            Console.Write("Deine Wahl: ");
-            int choiceOption = Convert.ToInt32(Console.ReadLine());
-            string[] fileExtensions = new string[] { "*.*" };
+            bool loopChoice;
 
-            try
+            do
             {
-                List<string> files = new List<string>();
-                foreach (var fileExtension in fileExtensions)
+                Console.Write("Pfad: ");
+                string pathInput = Console.ReadLine();
+                string directoryPath = $@"{pathInput}";
+                Console.WriteLine("\nAuswahlmöglichkeiten:");
+                Console.WriteLine("(1) Präfixe ändern");
+                Console.WriteLine("(2) Präfixe löschen");
+                Console.WriteLine("(3) Suffixe ändern");
+                Console.WriteLine("(4) Suffix löschen");
+                Console.WriteLine("(5) Teilausdrücke ändern");
+                Console.WriteLine("(6) Zahlenblock verschieben");
+                Console.WriteLine("(7) Führende Nullen einfügen");
+                Console.WriteLine("(8) Führende Nullen löschen");
+                Console.WriteLine("(9) Zahlenblock einfügen");
+                Console.WriteLine("(10) Zahlenblock löschen");
+                Console.Write("Deine Wahl: ");
+                int choiceOption = Convert.ToInt32(Console.ReadLine());
+                string[] fileExtensions = new string[] { "*.*" };
+
+                try
                 {
-                    files.AddRange(Directory.GetFiles(directoryPath, fileExtension));
+                    List<string> files = new List<string>();
+                    foreach (var fileExtension in fileExtensions)
+                    {
+                        files.AddRange(Directory.GetFiles(directoryPath, fileExtension));
+                    }
+
+                    if (files.Count == 0)
+                    {
+                        Console.WriteLine("\nKeine Dateien im angegebenen Ordner gefunden.");
+                        return;
+                    }
+
+                    switch (choiceOption)
+                    {
+                        case 1:
+                            Console.Write("\nNeuer File Name: ");
+                            string newFileNamePattern = Console.ReadLine();
+                            ChangePrefix(files, newFileNamePattern, directoryPath);
+                            break;
+                        case 2:
+                            RemovePrefix(files, directoryPath);
+                            break;
+                        case 3:
+                            Console.Write("\nGib das neue Suffix ein: ");
+                            string newSuffix = Console.ReadLine();
+                            ChangeSuffix(files, newSuffix, directoryPath);
+                            break;
+                        case 4:
+                            RemoveSuffix(files, directoryPath);
+                            break;
+                        case 5:
+                            Console.Write("\nGib den Teilausdruck ein, den du ändern möchtest: ");
+                            string oldSubstring = Console.ReadLine();
+                            Console.Write("Gib den neuen Teilausdruck ein: ");
+                            string newSubstring = Console.ReadLine();
+                            ChangePartialExpression(files, oldSubstring, newSubstring, directoryPath);
+                            break;
+                        case 6:
+                            ShiftNumberBlock(files, directoryPath);
+                            break;
+                        case 7:
+                            Console.Write("\nGesamtzahl der Ziffern: ");
+                            int totalLength = Convert.ToInt32(Console.ReadLine());
+                            AddLeadingZeros(files, totalLength, directoryPath);
+                            break;
+                        case 8:
+                            RemoveLeadingZeros(files, directoryPath);
+                            break;
+                        case 9:
+                            Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest (z.B. 123): ");
+                            int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
+                            AddNumberBlock(files, numberBlockToAdd, directoryPath);
+                            break;
+                        case 10:
+                            RemoveNumberBlock(files, directoryPath);
+                            break;
+                        default:
+                            Console.WriteLine("\n!!!Ungültige Eingabe!!!");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"\nEin Fehler ist aufgetreten: {ex.Message}");
                 }
 
-                if (files.Count == 0)
-                {
-                    Console.WriteLine("\nKeine Dateien im angegebenen Ordner gefunden.");
-                    return;
-                }
+                Console.Write("\nAndere Rename Option? Ja(1)/Nein(2): ");
+                int choice = Convert.ToInt32(Console.ReadLine());
 
-                switch (choiceOption)
+                if (choice == 1)
                 {
-                    case 1:
-                        Console.Write("\nNeuer File Name: ");
-                        string newFileNamePattern = Console.ReadLine();
-                        ChangePrefix(files, newFileNamePattern, directoryPath);
-                        break;
-                    case 2:
-                        RemovePrefix(files, directoryPath);
-                        break;
-                    case 3:
-                        Console.Write("\nGib das neue Suffix ein: ");
-                        string newSuffix = Console.ReadLine();
-                        ChangeSuffix(files, newSuffix, directoryPath);
-                        break;
-                    case 4:
-                        RemoveSuffix(files, directoryPath);
-                        break;
-                    case 5:
-                        Console.Write("\nGib den Teilausdruck ein, den du ändern möchtest: ");
-                        string oldSubstring = Console.ReadLine();
-                        Console.Write("Gib den neuen Teilausdruck ein: ");
-                        string newSubstring = Console.ReadLine();
-                        ChangePartialExpression(files, oldSubstring, newSubstring, directoryPath);
-                        break;
-                    case 6:
-                        ShiftNumberBlock(files, directoryPath);
-                        break;
-                    case 7:
-                        Console.Write("\nGesamtzahl der Ziffern: ");
-                        int totalLength = Convert.ToInt32(Console.ReadLine());
-                        AddLeadingZeros(files, totalLength, directoryPath);
-                        break;
-                    case 8:
-                        RemoveLeadingZeros(files, directoryPath);
-                        break;
-                    case 9:
-                        Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest (z.B. 123): ");
-                        int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
-                        AddNumberBlock(files, numberBlockToAdd, directoryPath);
-                        break;
-                    case 10:
-                        RemoveNumberBlock(files, directoryPath);
-                        break;
-                    default:
-                        Console.WriteLine("\n!!!Ungültige Eingabe!!!");
-                        break;
+                    loopChoice = true;
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"\nEin Fehler ist aufgetreten: {ex.Message}");
-            }
+                else if (choice == 2)
+                {
+                    loopChoice = false;
+                }
+                else
+                {
+                    Console.WriteLine("\nUngültige Auswahl. Programm wird beendet.");
+                    loopChoice = false;
+                }
+            } while (loopChoice == true);
         }
 
         public static void ChangePrefix(List<string> files, string newFileNamePattern, string directoryPath)
