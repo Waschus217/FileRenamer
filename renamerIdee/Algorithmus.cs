@@ -25,6 +25,7 @@ namespace renamerIdee
             Console.WriteLine("(7) Führende Nullen einfügen");
             Console.WriteLine("(8) Führende Nullen löschen");
             Console.WriteLine("(9) Zahlenblock einfügen");
+            Console.WriteLine("(10) Zahlenblock löschen");
             Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
             string[] fileExtensions = new string[] { "*.*" };
@@ -83,6 +84,9 @@ namespace renamerIdee
                         Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest (z.B. 123): ");
                         int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
                         AddNumberBlock(files, numberBlockToAdd, directoryPath);
+                        break;
+                    case 10:
+                        RemoveNumberBlock(files, directoryPath);
                         break;
                     default:
                         Console.WriteLine("\n!!!Ungültige Eingabe!!!");
@@ -326,6 +330,32 @@ namespace renamerIdee
             }
 
             Console.WriteLine("\nZahlenblock wurde erfolgreich hinzugefügt.");
+        }
+
+        public static void RemoveNumberBlock(List<string> files, string directoryPath)
+        {
+            foreach (var file in files)
+            {
+                string currentFilePath = file;
+                string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string extension = Path.GetExtension(currentFilePath);
+
+                string[] parts = currentFileName.Split('-');
+
+                if (parts.Length > 1 && int.TryParse(parts[^1], out int numberBlock))
+                {
+                    string newFileName = string.Join("-", parts, 0, parts.Length - 1) + extension;
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        System.IO.File.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Zahlenblock entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
+                }
+            }
+
+            Console.WriteLine("\nZahlenblöcke wurden erfolgreich entfernt.");
         }
     }
 }
