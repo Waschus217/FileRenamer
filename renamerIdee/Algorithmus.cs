@@ -236,7 +236,7 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Teilausdrücke wurden erfolgreich geändert.");
         }
 
-        public static void ShiftNumberBlock(List<string> files, string directoryPath)
+        public void ShiftNumberBlock(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -248,19 +248,25 @@ namespace renamerIdee
 
                 if (parts.Length > 0 && int.TryParse(parts[^1], out int numberBlock))
                 {
-                    string newFileName = $"{numberBlock:D3}-" + string.Join("-", parts, 0, parts.Length - 1) + extension;
+                    string newFileName = $"{numberBlock}-" + string.Join("-", parts, 0, parts.Length - 1) + extension;
                     string newFilePath = Path.Combine(directoryPath, newFileName);
 
-                    System.IO.File.Move(currentFilePath, newFilePath);
-                    Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        _fileMover.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
                 }
                 else if (parts.Length > 0 && int.TryParse(parts[0], out numberBlock))
                 {
-                    string newFileName = $"{string.Join("-", parts, 1, parts.Length - 1)}-{numberBlock:D3}{extension}";
+                    string newFileName = $"{string.Join("-", parts, 1, parts.Length - 1)}-{numberBlock}{extension}";
                     string newFilePath = Path.Combine(directoryPath, newFileName);
 
-                    System.IO.File.Move(currentFilePath, newFilePath);
-                    Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        _fileMover.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
                 }
             }
 
