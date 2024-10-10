@@ -273,7 +273,7 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Zahlenblöcke wurden erfolgreich verschoben.");
         }
 
-        public static void AddLeadingZeros(List<string> files, int totalLength, string directoryPath)
+        public void AddLeadingZeros(List<string> files, int totalLength, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -291,7 +291,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Führende Nullen hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
@@ -303,7 +303,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Führende Nullen hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
