@@ -8,7 +8,7 @@ using static System.Net.WebRequestMethods;
 
 namespace renamerIdee
 {
-    class Algorithmus
+    public class Algorithmus
     {
         public static void AlgorithmRenamePictureFiles()
         {
