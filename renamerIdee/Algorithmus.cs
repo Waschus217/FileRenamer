@@ -22,10 +22,10 @@ namespace renamerIdee
             Console.WriteLine("(4) Suffix löschen");
             Console.WriteLine("(5) Teilausdrücke ändern");
             Console.WriteLine("(6) Zahlenblock verschieben");
+            Console.WriteLine("(7) Führende Nullen einfügen");
             Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
             string[] fileExtensions = new string[] { "*.*" };
-            
 
             try
             {
@@ -68,6 +68,11 @@ namespace renamerIdee
                         break;
                     case 6:
                         ShiftNumberBlock(files, directoryPath);
+                        break;
+                    case 7:
+                        Console.Write("\nGesamtzahl der Ziffern: ");
+                        int totalLength = Convert.ToInt32(Console.ReadLine());
+                        AddLeadingZeros(files, totalLength, directoryPath);
                         break;
                     default:
                         Console.WriteLine("\n!!!Ungültige Eingabe!!!");
@@ -193,7 +198,7 @@ namespace renamerIdee
 
                 string[] parts = currentFileName.Split('-');
 
-                if (parts.Length > 0 && int.TryParse(parts[1], out int numberBlock))
+                if (parts.Length > 0 && int.TryParse(parts[^1], out int numberBlock))
                 {
                     string newFileName = $"{numberBlock:D3}-" + string.Join("-", parts, 0, parts.Length - 1) + extension;
                     string newFilePath = Path.Combine(directoryPath, newFileName);
@@ -212,6 +217,45 @@ namespace renamerIdee
             }
 
             Console.WriteLine("\nAlle Zahlenblöcke wurden erfolgreich verschoben.");
+        }
+
+        public static void AddLeadingZeros(List<string> files, int totalLength, string directoryPath)
+        {
+            foreach (var file in files)
+            {
+                string currentFilePath = file;
+                string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string extension = Path.GetExtension(currentFilePath);
+
+                string[] parts = currentFileName.Split('-');
+
+                if (parts.Length > 0 && int.TryParse(parts[^1], out int numberBlock))
+                {
+                    string newNumberBlock = numberBlock.ToString().PadLeft(totalLength, '0');
+                    string newFileName = $"{string.Join("-", parts, 0, parts.Length - 1)}-{newNumberBlock}{extension}";
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        System.IO.File.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Führende Nullen hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
+                }
+                else if (parts.Length > 0 && int.TryParse(parts[0], out numberBlock))
+                {
+                    string newNumberBlock = numberBlock.ToString().PadLeft(totalLength, '0');
+                    string newFileName = $"{newNumberBlock}-{string.Join("-", parts, 1, parts.Length - 1)}{extension}";
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        System.IO.File.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Führende Nullen hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
+                }
+            }
+
+            Console.WriteLine("\nFührende Nullen wurden erfolgreich hinzugefügt.");
         }
     }
 }
