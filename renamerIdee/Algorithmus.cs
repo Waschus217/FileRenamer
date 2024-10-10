@@ -312,7 +312,7 @@ namespace renamerIdee
             Console.WriteLine("\nFührende Nullen wurden erfolgreich hinzugefügt.");
         }
 
-        public static void RemoveLeadingZeros(List<string> files, string directoryPath)
+        public void RemoveLeadingZeros(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -330,7 +330,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Führende Nullen entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
@@ -342,7 +342,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Führende Nullen entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
