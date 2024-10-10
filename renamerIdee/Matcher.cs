@@ -64,7 +64,6 @@ namespace renamerIdee {
             Console.WriteLine("RUNNING NOW FILE RENAMER...");
             Console.WriteLine("----------------------------");
             Algorithmus.AlgorithmRenamePictureFiles();
-            Console.ReadKey();
         }
 
         private static void Test(string[] files, string oldName, string newName, string testRes = null) {
