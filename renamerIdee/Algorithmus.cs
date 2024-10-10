@@ -24,6 +24,7 @@ namespace renamerIdee
             Console.WriteLine("(6) Zahlenblock verschieben");
             Console.WriteLine("(7) Führende Nullen einfügen");
             Console.WriteLine("(8) Führende Nullen löschen");
+            Console.WriteLine("(9) Zahlenblock einfügen");
             Console.Write("Deine Wahl: ");
             int choiceOption = Convert.ToInt32(Console.ReadLine());
             string[] fileExtensions = new string[] { "*.*" };
@@ -77,6 +78,11 @@ namespace renamerIdee
                         break;
                     case 8:
                         RemoveLeadingZeros(files, directoryPath);
+                        break;
+                    case 9:
+                        Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest (z.B. 123): ");
+                        int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
+                        AddNumberBlock(files, numberBlockToAdd, directoryPath);
                         break;
                     default:
                         Console.WriteLine("\n!!!Ungültige Eingabe!!!");
@@ -299,6 +305,27 @@ namespace renamerIdee
             }
 
             Console.WriteLine("\nFührende Nullen wurden erfolgreich entfernt.");
+        }
+
+        public static void AddNumberBlock(List<string> files, int numberBlock, string directoryPath)
+        {
+            foreach (var file in files)
+            {
+                string currentFilePath = file;
+                string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string extension = Path.GetExtension(currentFilePath);
+
+                string newFileName = $"{currentFileName}-{numberBlock:D3}{extension}";
+                string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                if (newFileName != Path.GetFileName(currentFilePath))
+                {
+                    System.IO.File.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Zahlenblock hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                }
+            }
+
+            Console.WriteLine("\nZahlenblock wurde erfolgreich hinzugefügt.");
         }
     }
 }
