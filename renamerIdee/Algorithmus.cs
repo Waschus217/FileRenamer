@@ -142,7 +142,7 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Präfixe wurden erfolgreich geändert.");
         }
 
-        public static void RemovePrefix(List<string> files, string directoryPath)
+        public void RemovePrefix(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -166,7 +166,7 @@ namespace renamerIdee
 
                 if (newFileName != Path.GetFileName(currentFilePath))
                 {
-                    System.IO.File.Move(currentFilePath, newFilePath);
+                    _fileMover.Move(currentFilePath, newFilePath);
                     Console.WriteLine($"Präfix entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                 }
             }
