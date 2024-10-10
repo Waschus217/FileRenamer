@@ -215,7 +215,7 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Suffixe wurden erfolgreich entfernt.");
         }
 
-        public static void ChangePartialExpression(List<string> files, string oldSubstring, string newSubstring, string directoryPath)
+        public void ChangePartialExpression(List<string> files, string oldSubstring, string newSubstring, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -228,7 +228,7 @@ namespace renamerIdee
 
                 if (newFileName != Path.GetFileName(currentFilePath))
                 {
-                    System.IO.File.Move(currentFilePath, newFilePath);
+                    _fileMover.Move(currentFilePath, newFilePath);
                     Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                 }
             }
