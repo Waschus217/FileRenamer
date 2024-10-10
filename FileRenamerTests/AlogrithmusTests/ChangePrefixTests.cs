@@ -16,8 +16,8 @@ namespace FileRenamerTests.AlogrithmusTests
             var files = new List<string>
             {
                 @"C:\Test\file1.jpg",
-                @"C:\Test\file2.jpg",
-                @"C:\Test\file3.jpg"
+                @"C:\Test\file2.gif",
+                @"C:\Test\file3.png"
             };
             var newNamePattern = "test";
             var directoryPath = @"C:\Test";
@@ -32,13 +32,13 @@ namespace FileRenamerTests.AlogrithmusTests
             ), Times.Once);
 
             fileMoverMock.Verify(f => f.Move(
-                It.Is<string>(src => src == @"C:\Test\file2.jpg"),
-                It.Is<string>(dest => dest == @"C:\Test\002-test.jpg")
+                It.Is<string>(src => src == @"C:\Test\file2.gif"),
+                It.Is<string>(dest => dest == @"C:\Test\002-test.gif")
             ), Times.Once);
 
             fileMoverMock.Verify(f => f.Move(
-                It.Is<string>(src => src == @"C:\Test\file3.jpg"),
-                It.Is<string>(dest => dest == @"C:\Test\003-test.jpg")
+                It.Is<string>(src => src == @"C:\Test\file3.png"),
+                It.Is<string>(dest => dest == @"C:\Test\003-test.png")
             ), Times.Once);
         }
 
