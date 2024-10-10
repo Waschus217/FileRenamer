@@ -1,5 +1,9 @@
 using renamerIdee;
 using Moq;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using renamerIdee.Interfaces;
 
 namespace FileRenamerTests.AlogrithmusTests
 {
@@ -9,9 +13,33 @@ namespace FileRenamerTests.AlogrithmusTests
         [TestMethod]
         public void ChangePrefixSuccessful()
         {
-            var algorithmus = new Algorithmus();
+            var files = new List<string>
+            {
+                @"C:\Test\file1.jpg",
+                @"C:\Test\file2.jpg",
+                @"C:\Test\file3.jpg"
+            };
+            var newNamePattern = "test";
+            var directoryPath = @"C:\Test";
+            var fileMoverMock = new Mock<IFileMover>();
+            var algorithmus = new Algorithmus(fileMoverMock.Object);
 
-            algorithmus.ChangePrefix();
+            algorithmus.ChangePrefix(files, newNamePattern, directoryPath);
+
+            fileMoverMock.Verify(f => f.Move(
+                It.Is<string>(src => src == @"C:\Test\file1.jpg"),
+                It.Is<string>(dest => dest == @"C:\Test\001-test.jpg")
+            ), Times.Once);
+
+            fileMoverMock.Verify(f => f.Move(
+                It.Is<string>(src => src == @"C:\Test\file2.jpg"),
+                It.Is<string>(dest => dest == @"C:\Test\002-test.jpg")
+            ), Times.Once);
+
+            fileMoverMock.Verify(f => f.Move(
+                It.Is<string>(src => src == @"C:\Test\file3.jpg"),
+                It.Is<string>(dest => dest == @"C:\Test\003-test.jpg")
+            ), Times.Once);
         }
     }
 }

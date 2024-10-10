@@ -1,4 +1,5 @@
-﻿using System;
+﻿using renamerIdee.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,8 +11,16 @@ namespace renamerIdee
 {
     public class Algorithmus
     {
-        public static void AlgorithmRenamePictureFiles()
+        private readonly IFileMover _fileMover;
+
+        public Algorithmus(IFileMover fileMover)
         {
+            _fileMover = fileMover;
+        }
+
+        public void AlgorithmRenamePictureFiles()
+        {
+            
             bool loopChoice;
 
             do
@@ -121,7 +130,7 @@ namespace renamerIdee
             } while (loopChoice == true);
         }
 
-        public static void ChangePrefix(List<string> files, string newFileNamePattern, string directoryPath)
+        public void ChangePrefix(List<string> files, string newFileNamePattern, string directoryPath)
         {
             for (int i = 0; i < files.Count; i++)
             {
@@ -130,7 +139,7 @@ namespace renamerIdee
                 string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
                 string newFilePath = Path.Combine(directoryPath, newFileName);
 
-                System.IO.File.Move(currentFilePath, newFilePath);
+                _fileMover.Move(currentFilePath, newFilePath);
                 Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
             }
             
