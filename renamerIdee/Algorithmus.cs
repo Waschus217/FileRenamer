@@ -196,7 +196,7 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Suffixe wurden erfolgreich geändert.");
         }
 
-        public static void RemoveSuffix(List<string> files, string directoryPath)
+        public void RemoveSuffix(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -207,7 +207,7 @@ namespace renamerIdee
 
                 if (currentFileName + Path.GetExtension(currentFilePath) != currentFileName)
                 {
-                    System.IO.File.Move(currentFilePath, newFilePath);
+                    _fileMover.Move(currentFilePath, newFilePath);
                     Console.WriteLine($"Suffix entfernt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
                 }
             }
