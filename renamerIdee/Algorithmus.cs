@@ -1,17 +1,26 @@
-﻿using System;
+﻿using renamerIdee.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
+using System.Text.RegularExpressions;
 
 namespace renamerIdee
 {
-    class Algorithmus
+    public class Algorithmus
     {
-        public static void AlgorithmRenamePictureFiles()
+        private readonly IFileMover _fileMover;
+        int foundNumbers;
+        string newFileName, newFilePath;
+        bool verfiy;
+
+        public Algorithmus(IFileMover fileMover)
         {
+            _fileMover = fileMover;
+        }
+
+        public void AlgorithmRenamePictureFiles()
+        {
+            
             bool loopChoice;
 
             do
@@ -85,9 +94,11 @@ namespace renamerIdee
                             RemoveLeadingZeros(files, directoryPath);
                             break;
                         case 9:
-                            Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest (z.B. 123): ");
+                            Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest: ");
                             int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
-                            AddNumberBlock(files, numberBlockToAdd, directoryPath);
+                            Console.Write("\nMöchtest du den Zahlenblock vorne (1) oder hinten (2): ");
+                            int numberBlockPosition = Convert.ToInt32(Console.ReadLine());
+                            AddNumberBlock(files, numberBlockToAdd, numberBlockPosition, directoryPath);
                             break;
                         case 10:
                             RemoveNumberBlock(files, directoryPath);
@@ -121,23 +132,26 @@ namespace renamerIdee
             } while (loopChoice == true);
         }
 
-        public static void ChangePrefix(List<string> files, string newFileNamePattern, string directoryPath)
+        public void ChangePrefix(List<string> files, string newFileNamePattern, string directoryPath)
         {
             for (int i = 0; i < files.Count; i++)
             {
                 string currentFilePath = files[i];
                 string extension = Path.GetExtension(currentFilePath);
-                string newFileName = $"{(i + 1):D3}-{newFileNamePattern}{extension}";
+                string newFileName = $"{newFileNamePattern}{i + 1}{extension}";
                 string newFilePath = Path.Combine(directoryPath, newFileName);
 
-                System.IO.File.Move(currentFilePath, newFilePath);
-                Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                if (newFileName != Path.GetFileName(currentFilePath))
+                {
+                    _fileMover.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                }
             }
             
             Console.WriteLine("\nAlle Präfixe wurden erfolgreich geändert.");
         }
 
-        public static void RemovePrefix(List<string> files, string directoryPath)
+        public void RemovePrefix(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -161,7 +175,7 @@ namespace renamerIdee
 
                 if (newFileName != Path.GetFileName(currentFilePath))
                 {
-                    System.IO.File.Move(currentFilePath, newFilePath);
+                    _fileMover.Move(currentFilePath, newFilePath);
                     Console.WriteLine($"Präfix entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                 }
             }
@@ -169,22 +183,26 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Präfixe wurden erfolgreich entfernt.");
         }
 
-        public static void ChangeSuffix(List<string> files, string newSuffix, string directoryPath)
+        public void ChangeSuffix(List<string> files, string newSuffix, string directoryPath)
         {
             foreach (var file in files)
             {
                 string currentFilePath = file;
                 string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                string newFileName = $"{currentFileName}{newSuffix}";
                 string newFilePath = Path.Combine(directoryPath, currentFileName + newSuffix);
 
-                System.IO.File.Move(currentFilePath, newFilePath);
-                Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
+                if (newFileName != Path.GetFileName(currentFilePath))
+                {
+                    _fileMover.Move(currentFilePath, newFilePath);
+                    Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
+                }
             }
 
             Console.WriteLine("\nAlle Suffixe wurden erfolgreich geändert.");
         }
 
-        public static void RemoveSuffix(List<string> files, string directoryPath)
+        public void RemoveSuffix(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -195,7 +213,7 @@ namespace renamerIdee
 
                 if (currentFileName + Path.GetExtension(currentFilePath) != currentFileName)
                 {
-                    System.IO.File.Move(currentFilePath, newFilePath);
+                    _fileMover.Move(currentFilePath, newFilePath);
                     Console.WriteLine($"Suffix entfernt: {Path.GetFileName(currentFilePath)} -> {Path.GetFileName(newFilePath)}");
                 }
             }
@@ -203,7 +221,7 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Suffixe wurden erfolgreich entfernt.");
         }
 
-        public static void ChangePartialExpression(List<string> files, string oldSubstring, string newSubstring, string directoryPath)
+        public void ChangePartialExpression(List<string> files, string oldSubstring, string newSubstring, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -216,7 +234,7 @@ namespace renamerIdee
 
                 if (newFileName != Path.GetFileName(currentFilePath))
                 {
-                    System.IO.File.Move(currentFilePath, newFilePath);
+                    _fileMover.Move(currentFilePath, newFilePath);
                     Console.WriteLine($"Datei umbenannt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                 }
             }
@@ -224,7 +242,7 @@ namespace renamerIdee
             Console.WriteLine("\nAlle Teilausdrücke wurden erfolgreich geändert.");
         }
 
-        public static void ShiftNumberBlock(List<string> files, string directoryPath)
+        public void ShiftNumberBlock(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -236,26 +254,32 @@ namespace renamerIdee
 
                 if (parts.Length > 0 && int.TryParse(parts[^1], out int numberBlock))
                 {
-                    string newFileName = $"{numberBlock:D3}-" + string.Join("-", parts, 0, parts.Length - 1) + extension;
+                    string newFileName = $"{numberBlock}-" + string.Join("-", parts, 0, parts.Length - 1) + extension;
                     string newFilePath = Path.Combine(directoryPath, newFileName);
 
-                    System.IO.File.Move(currentFilePath, newFilePath);
-                    Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        _fileMover.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
                 }
                 else if (parts.Length > 0 && int.TryParse(parts[0], out numberBlock))
                 {
-                    string newFileName = $"{string.Join("-", parts, 1, parts.Length - 1)}-{numberBlock:D3}{extension}";
+                    string newFileName = $"{string.Join("-", parts, 1, parts.Length - 1)}-{numberBlock}{extension}";
                     string newFilePath = Path.Combine(directoryPath, newFileName);
 
-                    System.IO.File.Move(currentFilePath, newFilePath);
-                    Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        _fileMover.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Zahlenblock verschoben: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
                 }
             }
 
             Console.WriteLine("\nAlle Zahlenblöcke wurden erfolgreich verschoben.");
         }
 
-        public static void AddLeadingZeros(List<string> files, int totalLength, string directoryPath)
+        public void AddLeadingZeros(List<string> files, int totalLength, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -273,7 +297,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Führende Nullen hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
@@ -285,7 +309,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Führende Nullen hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
@@ -294,7 +318,7 @@ namespace renamerIdee
             Console.WriteLine("\nFührende Nullen wurden erfolgreich hinzugefügt.");
         }
 
-        public static void RemoveLeadingZeros(List<string> files, string directoryPath)
+        public void RemoveLeadingZeros(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -312,7 +336,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Führende Nullen entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
@@ -324,7 +348,7 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Führende Nullen entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
@@ -333,7 +357,7 @@ namespace renamerIdee
             Console.WriteLine("\nFührende Nullen wurden erfolgreich entfernt.");
         }
 
-        public static void AddNumberBlock(List<string> files, int numberBlock, string directoryPath)
+        public void AddNumberBlock(List<string> files, int numberBlock, int numberBlockPosition, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -341,12 +365,33 @@ namespace renamerIdee
                 string currentFileName = Path.GetFileNameWithoutExtension(currentFilePath);
                 string extension = Path.GetExtension(currentFilePath);
 
-                string newFileName = $"{currentFileName}-{numberBlock:D3}{extension}";
-                string newFilePath = Path.Combine(directoryPath, newFileName);
+                string pattern = @"\d+";
+                Match match = Regex.Match(currentFileName, pattern);
 
-                if (newFileName != Path.GetFileName(currentFilePath))
+                if (match.Success)
                 {
-                    System.IO.File.Move(currentFilePath, newFilePath);
+                    foundNumbers = Convert.ToInt32(match.Value);
+                    verfiy = Convert.ToInt32(foundNumbers) != numberBlock;
+                }
+                else
+                {
+                    verfiy = true;
+                }
+
+                if (numberBlockPosition == 1 && verfiy)
+                {
+                    newFileName = $"{numberBlock}-{currentFileName}{extension}";
+                    newFilePath = Path.Combine(directoryPath, newFileName);
+                }
+                else if (numberBlockPosition == 2 && verfiy)
+                {
+                    newFileName = $"{currentFileName}-{numberBlock}{extension}";
+                    newFilePath = Path.Combine(directoryPath, newFileName);
+                }
+
+                if (newFileName != Path.GetFileName(currentFilePath) && !String.IsNullOrEmpty(newFileName))
+                {
+                    _fileMover.Move(currentFilePath, newFilePath);
                     Console.WriteLine($"Zahlenblock hinzugefügt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                 }
             }
@@ -354,7 +399,7 @@ namespace renamerIdee
             Console.WriteLine("\nZahlenblock wurde erfolgreich hinzugefügt.");
         }
 
-        public static void RemoveNumberBlock(List<string> files, string directoryPath)
+        public void RemoveNumberBlock(List<string> files, string directoryPath)
         {
             foreach (var file in files)
             {
@@ -371,7 +416,18 @@ namespace renamerIdee
 
                     if (newFileName != Path.GetFileName(currentFilePath))
                     {
-                        System.IO.File.Move(currentFilePath, newFilePath);
+                        _fileMover.Move(currentFilePath, newFilePath);
+                        Console.WriteLine($"Zahlenblock entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
+                    }
+                }
+                else if (parts.Length > 0 && int.TryParse(parts[0], out numberBlock))
+                {
+                    string newFileName = string.Join("-", parts, 1, parts.Length - 1) + extension;
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+
+                    if (newFileName != Path.GetFileName(currentFilePath))
+                    {
+                        _fileMover.Move(currentFilePath, newFilePath);
                         Console.WriteLine($"Zahlenblock entfernt: {Path.GetFileName(currentFilePath)} -> {newFileName}");
                     }
                 }
