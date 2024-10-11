@@ -55,7 +55,7 @@ namespace renamerIdee
                     switch (choiceOption)
                     {
                         case 1:
-                            Console.Write("\nNeuer File Name: ");
+                            Console.Write("\nNeuer Datei Name: ");
                             string newFileNamePattern = Console.ReadLine();
                             ChangePrefix(files, newFileNamePattern, directoryPath);
                             break;
@@ -112,7 +112,7 @@ namespace renamerIdee
 
                 if (loop == true)
                 {
-                    Console.Write("\nAndere Rename Option? Ja(1)/Nein(2): ");
+                    Console.Write("\nAndere Umbenennungs Option? Ja(1)/Nein(2): ");
                     int choice = Convert.ToInt32(Console.ReadLine());
 
                     if (choice == 1)
