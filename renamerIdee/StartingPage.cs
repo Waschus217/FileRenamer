@@ -6,6 +6,14 @@ namespace renamerIdee
 {
     public class StartingPage
     {
+        InputValidation validation = new InputValidation();
+        int helpDecision;
+
+        public StartingPage()
+        {
+            validation = new InputValidation();
+        }
+
         public void StartSign()
         {
             string sign = "File Renamer";
@@ -18,12 +26,11 @@ namespace renamerIdee
 
         public int StartInformation()
         {
-            int helpDecision;
             Console.WriteLine("\nVielen Dank dass Sie unseren File Renamer nutzen.");
             Console.WriteLine("Mittels diesem können Sie einen Dateipfad eingeben \nund in diesem dann zwischen verschiedenen Umbennenungsoprionen wählen.");
             Console.WriteLine("\nFür weiter Details tippen Sie bitte die (1). \nSofern keine Hilfe nötig klicken Sie die (2) und Sie können loslegen.");
-            Console.Write("Ihre Wahl: ");
-            return helpDecision = Convert.ToInt32(Console.ReadLine());
+
+            return helpDecision = validation.GetValidInputOneOrTwo("Bitte wählen: ");
         }
 
         public void HelpScreen()

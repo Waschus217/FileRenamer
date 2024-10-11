@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Metadata;
+using System.Text.Json.Serialization.Metadata;
 using System.Text.RegularExpressions;
 
 namespace renamerIdee
@@ -9,20 +11,22 @@ namespace renamerIdee
     public class Algorithmus
     {
         private readonly IFileMover _fileMover;
-        int foundNumbers;
+        int foundNumbers, choiceOption;
         string newFileName, newFilePath;
         bool verfiy, loopChoice, endingLoopChoice;
+        InputValidation validation = new InputValidation();
 
         public Algorithmus(IFileMover fileMover)
         {
             _fileMover = fileMover;
+            this.validation = new InputValidation();
         }
 
         public void AlgorithmRenamePictureFiles()
         {
             do
             {
-                Console.Write("Pfad: ");
+                Console.Write("Geben Sie den Ordnerpfad ein: ");
                 string pathInput = Console.ReadLine();
                 bool existingDirectory = Directory.Exists(pathInput);
 
@@ -41,10 +45,10 @@ namespace renamerIdee
                         Console.WriteLine("(7) Führende Nullen einfügen");
                         Console.WriteLine("(8) Führende Nullen löschen");
                         Console.WriteLine("(9) Zahlenblock einfügen");
-                        Console.WriteLine("(10) Zahlenblock löschen");
-                        Console.Write("Deine Wahl: ");
-                        int choiceOption = Convert.ToInt32(Console.ReadLine());
-                        string[] fileExtensions = new string[] { "*.*" };
+                        Console.WriteLine("(10) Zahlenblock löschen\n");
+
+                        int choiceOption = validation.GetValidInputOneToTen("Deine Wahl: ");
+                        string[] fileExtensions = new string[] { "*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.tiff", "*.webp", "*.svg" };
                         bool loop = false;
 
                         try
@@ -58,44 +62,52 @@ namespace renamerIdee
                             switch (choiceOption)
                             {
                                 case 1:
-                                    Console.Write("\nNeuer Datei Name: ");
-                                    string newFileNamePattern = Console.ReadLine();
+                                    string newFileNamePattern = validation.GetValidInputNullOrEmpty("\nNeuer Datei Name: ");
                                     ChangePrefix(files, newFileNamePattern, directoryPath);
                                     break;
                                 case 2:
                                     RemovePrefix(files, directoryPath);
                                     break;
                                 case 3:
-                                    Console.Write("\nGib das neue Suffix ein: ");
-                                    string newSuffix = Console.ReadLine();
+                                    string newSuffix = validation.GetValidInputNullOrEmpty("\nGib das neue Suffix ein: ");
                                     ChangeSuffix(files, newSuffix, directoryPath);
                                     break;
                                 case 4:
                                     RemoveSuffix(files, directoryPath);
                                     break;
                                 case 5:
-                                    Console.Write("\nGib den Teilausdruck ein, den du ändern möchtest: ");
-                                    string oldSubstring = Console.ReadLine();
-                                    Console.Write("Gib den neuen Teilausdruck ein: ");
-                                    string newSubstring = Console.ReadLine();
+                                    string oldSubstring = validation.GetValidInputNullOrEmpty("\nGib den Teilausdruck ein, den du ändern möchtest: ");
+                                    string newSubstring = validation.GetValidInputNullOrEmpty("Gib den neuen Teilausdruck ein: ");
                                     ChangePartialExpression(files, oldSubstring, newSubstring, directoryPath);
                                     break;
                                 case 6:
                                     ShiftNumberBlock(files, directoryPath);
                                     break;
                                 case 7:
-                                    Console.Write("\nGesamtzahl der Ziffern: ");
-                                    int totalLength = Convert.ToInt32(Console.ReadLine());
+                                    int totalLength;
+                                    string totalLengthInput;
+
+                                    do
+                                    {
+                                        totalLengthInput = validation.GetValidInputNullOrEmpty("\nGesamtzahl der Ziffern: ");
+                                    } while (!int.TryParse(totalLengthInput, out totalLength));
+
                                     AddLeadingZeros(files, totalLength, directoryPath);
                                     break;
                                 case 8:
                                     RemoveLeadingZeros(files, directoryPath);
                                     break;
                                 case 9:
-                                    Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest: ");
-                                    int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
-                                    Console.Write("\nMöchtest du den Zahlenblock vorne (1) oder hinten (2): ");
-                                    int numberBlockPosition = Convert.ToInt32(Console.ReadLine());
+                                    int numberBlockToAdd;
+                                    string numberBlockToAddInput;
+
+                                    do
+                                    {
+                                        numberBlockToAddInput = validation.GetValidInputNullOrEmpty("\nGib den Zahlenblock ein, den du hinzufügen möchtest: ");
+                                    } while (!int.TryParse(numberBlockToAddInput, out numberBlockToAdd));
+
+                                    int numberBlockPosition = validation.GetValidInputOneOrTwo("\nMöchtest du den Zahlenblock vorne (1) oder hinten (2): ");
+
                                     AddNumberBlock(files, numberBlockToAdd, numberBlockPosition, directoryPath);
                                     break;
                                 case 10:
@@ -117,8 +129,7 @@ namespace renamerIdee
                         }
                         if (loop == true)
                         {
-                            Console.Write("\nAndere Umbenennungs Option? Ja(1)/Nein(2): ");
-                            int choice = Convert.ToInt32(Console.ReadLine());
+                            int choice = validation.GetValidInputOneOrTwo("\nAndere Umbenennungs Option? Ja(1)/Nein(2): ");
 
                             if (choice == 1)
                             {
@@ -137,8 +148,7 @@ namespace renamerIdee
                     else
                     {
                         Console.WriteLine("\nDer Ausgewählte Dateipfad existiert nicht!");
-                        Console.Write("Klicke (1) um fortzufahren und es erneut zu versuchen oder (2) um die Anwendung zu beenden: ");
-                        int endingChoice = Convert.ToInt32(Console.ReadLine());
+                        int endingChoice = validation.GetValidInputOneOrTwo("Klicke (1) um fortzufahren und es erneut zu versuchen oder (2) um die Anwendung zu beenden: ");
 
                         if (endingChoice == 1)
                         {
