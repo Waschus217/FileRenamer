@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using System;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System;
 
 namespace renamerIdee
 {
