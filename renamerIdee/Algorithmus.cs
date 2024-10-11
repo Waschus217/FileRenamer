@@ -11,7 +11,7 @@ namespace renamerIdee
         private readonly IFileMover _fileMover;
         int foundNumbers;
         string newFileName, newFilePath;
-        bool verfiy;
+        bool verfiy, loopChoice, endingLoopChoice;
 
         public Algorithmus(IFileMover fileMover)
         {
@@ -20,120 +20,135 @@ namespace renamerIdee
 
         public void AlgorithmRenamePictureFiles()
         {
-            
-            bool loopChoice;
-
             do
             {
                 Console.Write("Pfad: ");
                 string pathInput = Console.ReadLine();
-                string directoryPath = $@"{pathInput}";
-                Console.WriteLine("\nAuswahlmöglichkeiten:");
-                Console.WriteLine("(1) Präfixe ändern");
-                Console.WriteLine("(2) Präfixe löschen");
-                Console.WriteLine("(3) Suffixe ändern");
-                Console.WriteLine("(4) Suffix löschen");
-                Console.WriteLine("(5) Teilausdrücke ändern");
-                Console.WriteLine("(6) Zahlenblock verschieben");
-                Console.WriteLine("(7) Führende Nullen einfügen");
-                Console.WriteLine("(8) Führende Nullen löschen");
-                Console.WriteLine("(9) Zahlenblock einfügen");
-                Console.WriteLine("(10) Zahlenblock löschen");
-                Console.Write("Deine Wahl: ");
-                int choiceOption = Convert.ToInt32(Console.ReadLine());
-                string[] fileExtensions = new string[] { "*.*" };
-                bool loop = false;
+                bool existingDirectory = Directory.Exists(pathInput);
 
-                try
+                do
                 {
-                    List<string> files = new List<string>();
-                    foreach (var fileExtension in fileExtensions)
+                    if (existingDirectory == true)
                     {
-                        files.AddRange(Directory.GetFiles(directoryPath, fileExtension));
-                    }
+                        string directoryPath = $@"{pathInput}";
+                        Console.WriteLine("\nAuswahlmöglichkeiten:");
+                        Console.WriteLine("(1) Präfixe ändern");
+                        Console.WriteLine("(2) Präfixe löschen");
+                        Console.WriteLine("(3) Suffixe ändern");
+                        Console.WriteLine("(4) Suffix löschen");
+                        Console.WriteLine("(5) Teilausdrücke ändern");
+                        Console.WriteLine("(6) Zahlenblock verschieben");
+                        Console.WriteLine("(7) Führende Nullen einfügen");
+                        Console.WriteLine("(8) Führende Nullen löschen");
+                        Console.WriteLine("(9) Zahlenblock einfügen");
+                        Console.WriteLine("(10) Zahlenblock löschen");
+                        Console.Write("Deine Wahl: ");
+                        int choiceOption = Convert.ToInt32(Console.ReadLine());
+                        string[] fileExtensions = new string[] { "*.*" };
+                        bool loop = false;
 
-                    switch (choiceOption)
-                    {
-                        case 1:
-                            Console.Write("\nNeuer Datei Name: ");
-                            string newFileNamePattern = Console.ReadLine();
-                            ChangePrefix(files, newFileNamePattern, directoryPath);
-                            break;
-                        case 2:
-                            RemovePrefix(files, directoryPath);
-                            break;
-                        case 3:
-                            Console.Write("\nGib das neue Suffix ein: ");
-                            string newSuffix = Console.ReadLine();
-                            ChangeSuffix(files, newSuffix, directoryPath);
-                            break;
-                        case 4:
-                            RemoveSuffix(files, directoryPath);
-                            break;
-                        case 5:
-                            Console.Write("\nGib den Teilausdruck ein, den du ändern möchtest: ");
-                            string oldSubstring = Console.ReadLine();
-                            Console.Write("Gib den neuen Teilausdruck ein: ");
-                            string newSubstring = Console.ReadLine();
-                            ChangePartialExpression(files, oldSubstring, newSubstring, directoryPath);
-                            break;
-                        case 6:
-                            ShiftNumberBlock(files, directoryPath);
-                            break;
-                        case 7:
-                            Console.Write("\nGesamtzahl der Ziffern: ");
-                            int totalLength = Convert.ToInt32(Console.ReadLine());
-                            AddLeadingZeros(files, totalLength, directoryPath);
-                            break;
-                        case 8:
-                            RemoveLeadingZeros(files, directoryPath);
-                            break;
-                        case 9:
-                            Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest: ");
-                            int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
-                            Console.Write("\nMöchtest du den Zahlenblock vorne (1) oder hinten (2): ");
-                            int numberBlockPosition = Convert.ToInt32(Console.ReadLine());
-                            AddNumberBlock(files, numberBlockToAdd, numberBlockPosition, directoryPath);
-                            break;
-                        case 10:
-                            RemoveNumberBlock(files, directoryPath);
-                            break;
-                        default:
-                            Console.WriteLine("\n!!!Ungültige Eingabe!!!");
-                            break;
-                    }
+                        try
+                        {
+                            List<string> files = new List<string>();
+                            foreach (var fileExtension in fileExtensions)
+                            {
+                                files.AddRange(Directory.GetFiles(directoryPath, fileExtension));
+                            }
 
-                    loop = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"\nEin Fehler ist aufgetreten: {ex.Message}");
-                }
+                            switch (choiceOption)
+                            {
+                                case 1:
+                                    Console.Write("\nNeuer Datei Name: ");
+                                    string newFileNamePattern = Console.ReadLine();
+                                    ChangePrefix(files, newFileNamePattern, directoryPath);
+                                    break;
+                                case 2:
+                                    RemovePrefix(files, directoryPath);
+                                    break;
+                                case 3:
+                                    Console.Write("\nGib das neue Suffix ein: ");
+                                    string newSuffix = Console.ReadLine();
+                                    ChangeSuffix(files, newSuffix, directoryPath);
+                                    break;
+                                case 4:
+                                    RemoveSuffix(files, directoryPath);
+                                    break;
+                                case 5:
+                                    Console.Write("\nGib den Teilausdruck ein, den du ändern möchtest: ");
+                                    string oldSubstring = Console.ReadLine();
+                                    Console.Write("Gib den neuen Teilausdruck ein: ");
+                                    string newSubstring = Console.ReadLine();
+                                    ChangePartialExpression(files, oldSubstring, newSubstring, directoryPath);
+                                    break;
+                                case 6:
+                                    ShiftNumberBlock(files, directoryPath);
+                                    break;
+                                case 7:
+                                    Console.Write("\nGesamtzahl der Ziffern: ");
+                                    int totalLength = Convert.ToInt32(Console.ReadLine());
+                                    AddLeadingZeros(files, totalLength, directoryPath);
+                                    break;
+                                case 8:
+                                    RemoveLeadingZeros(files, directoryPath);
+                                    break;
+                                case 9:
+                                    Console.Write("\nGib den Zahlenblock ein, den du hinzufügen möchtest: ");
+                                    int numberBlockToAdd = Convert.ToInt32(Console.ReadLine());
+                                    Console.Write("\nMöchtest du den Zahlenblock vorne (1) oder hinten (2): ");
+                                    int numberBlockPosition = Convert.ToInt32(Console.ReadLine());
+                                    AddNumberBlock(files, numberBlockToAdd, numberBlockPosition, directoryPath);
+                                    break;
+                                case 10:
+                                    RemoveNumberBlock(files, directoryPath);
+                                    break;
+                                default:
+                                    Console.WriteLine("\n!!!Ungültige Eingabe!!!");
+                                    break;
+                            }
 
-                if (loop == true)
-                {
-                    Console.Write("\nAndere Umbenennungs Option? Ja(1)/Nein(2): ");
-                    int choice = Convert.ToInt32(Console.ReadLine());
+                            loop = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"\nEin Fehler ist aufgetreten: {ex.Message}");
+                            Console.ReadKey();
+                        }
+                        if (loop == true)
+                        {
+                            Console.Write("\nAndere Umbenennungs Option? Ja(1)/Nein(2): ");
+                            int choice = Convert.ToInt32(Console.ReadLine());
 
-                    if (choice == 1)
-                    {
-                        loopChoice = true;
-                    }
-                    else if (choice == 2)
-                    {
-                        loopChoice = false;
+                            if (choice == 1)
+                            {
+                                loopChoice = true;
+                            }
+                            else
+                            {
+                                loopChoice = false;
+                            }
+                        }
+                        else
+                        {
+                            loopChoice = false;
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("\nUngültige Auswahl. Programm wird beendet.");
-                        loopChoice = false;
+                        Console.WriteLine("\nDer Ausgewählte Dateipfad existiert nicht!");
+                        Console.Write("Klicke (1) um fortzufahren und es erneut zu versuchen oder (2) um die Anwendung zu beenden: ");
+                        int endingChoice = Convert.ToInt32(Console.ReadLine());
+
+                        if (endingChoice == 1)
+                        {
+                            endingLoopChoice = true;
+                        }
+                        else
+                        {
+                            endingLoopChoice = false;
+                        }
                     }
-                }
-                else
-                {
-                    loopChoice = false ;
-                }
-            } while (loopChoice == true);
+                } while (loopChoice == true);
+            } while (endingLoopChoice == true);
         }
 
         public void ChangePrefix(List<string> files, string newFileNamePattern, string directoryPath)
