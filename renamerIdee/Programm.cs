@@ -1,4 +1,6 @@
-﻿namespace renamerIdee
+﻿using System;
+
+namespace renamerIdee
 {
     class Programm
     {
@@ -6,7 +8,32 @@
         {
             var fileMover = new FileMover();
             Algorithmus algorithmus = new Algorithmus(fileMover);
-            algorithmus.AlgorithmRenamePictureFiles();
+            StartingPage startingPage = new StartingPage();
+
+            startingPage.StartSign();
+            int helpDecision = startingPage.StartInformation();
+
+            bool endLoop = false;
+
+            do
+            {
+                if (helpDecision == 1)
+                {
+                    startingPage.HelpScreen();
+                    helpDecision = 2;
+                    endLoop = true;
+                    Console.Clear();
+                }
+                else if (helpDecision == 2)
+                {
+                    Console.Clear();
+                    algorithmus.AlgorithmRenamePictureFiles();
+                    endLoop = false;
+                }
+            } while (endLoop);
+
+            startingPage.EndSign();
+            Console.ReadKey();
         }
     }
 }
