@@ -25,7 +25,6 @@ namespace renamerIdee
             Console.WriteLine("\nVielen Dank dass Sie unseren File Renamer nutzen.");
             Console.WriteLine("Mittels diesem können Sie einen Dateipfad eingeben \nund in diesem dann zwischen verschiedenen Umbennenungsoprionen wählen.");
             Console.WriteLine("\nFür weiter Details tippen Sie bitte die (1). \nSofern keine Hilfe nötig klicken Sie die (2) und Sie können loslegen.");
-            Console.Write("Ihre Wahl: ");
 
             while (!validInput)
             {

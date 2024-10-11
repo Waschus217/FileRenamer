@@ -9,7 +9,7 @@ namespace renamerIdee
     public class Algorithmus
     {
         private readonly IFileMover _fileMover;
-        int foundNumbers;
+        int foundNumbers, choiceOption;
         string newFileName, newFilePath;
         bool verfiy, loopChoice, endingLoopChoice;
 
@@ -22,7 +22,7 @@ namespace renamerIdee
         {
             do
             {
-                Console.Write("Pfad: ");
+                Console.Write("Geben Sie den Ordnerpfad ein: ");
                 string pathInput = Console.ReadLine();
                 bool existingDirectory = Directory.Exists(pathInput);
 
@@ -41,10 +41,26 @@ namespace renamerIdee
                         Console.WriteLine("(7) Führende Nullen einfügen");
                         Console.WriteLine("(8) Führende Nullen löschen");
                         Console.WriteLine("(9) Zahlenblock einfügen");
-                        Console.WriteLine("(10) Zahlenblock löschen");
-                        Console.Write("Deine Wahl: ");
-                        int choiceOption = Convert.ToInt32(Console.ReadLine());
-                        string[] fileExtensions = new string[] { "*.*" };
+                        Console.WriteLine("(10) Zahlenblock löschen\n");
+
+                        bool validInput = false;
+
+                        while (!validInput)
+                        {
+                            Console.Write("Deine Wahl: ");
+                            string input = Console.ReadLine();
+
+                            if (int.TryParse(input, out choiceOption) && choiceOption >= 1 && choiceOption <= 10)
+                            {
+                                validInput = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Ungültige Eingabe!\n");
+                            }
+                        }
+
+                        string[] fileExtensions = new string[] { "*.jpg", "*.jpeg", "*.png", "*.gif", "*.bmp", "*.tiff", "*.webp", "*.svg" };
                         bool loop = false;
 
                         try
