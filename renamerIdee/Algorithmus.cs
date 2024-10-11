@@ -110,7 +110,9 @@ namespace renamerIdee
                         }
                         catch (Exception ex)
                         {
+                            Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine($"\nEin Fehler ist aufgetreten: {ex.Message}");
+                            Console.ForegroundColor= ConsoleColor.White;
                             Console.ReadKey();
                         }
                         if (loop == true)
