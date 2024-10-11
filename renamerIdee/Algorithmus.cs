@@ -9,7 +9,7 @@ namespace renamerIdee
     public class Algorithmus
     {
         private readonly IFileMover _fileMover;
-        int foundNumbers, choiceOption;
+        int foundNumbers;
         string newFileName, newFilePath;
         bool verfiy, loopChoice, endingLoopChoice;
         InputValidation validation = new InputValidation();
