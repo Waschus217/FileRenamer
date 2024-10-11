@@ -42,6 +42,7 @@ namespace renamerIdee
                 Console.Write("Deine Wahl: ");
                 int choiceOption = Convert.ToInt32(Console.ReadLine());
                 string[] fileExtensions = new string[] { "*.*" };
+                bool loop = false;
 
                 try
                 {
@@ -49,12 +50,6 @@ namespace renamerIdee
                     foreach (var fileExtension in fileExtensions)
                     {
                         files.AddRange(Directory.GetFiles(directoryPath, fileExtension));
-                    }
-
-                    if (files.Count == 0)
-                    {
-                        Console.WriteLine("\nKeine Dateien im angegebenen Ordner gefunden.");
-                        return;
                     }
 
                     switch (choiceOption)
@@ -107,27 +102,36 @@ namespace renamerIdee
                             Console.WriteLine("\n!!!Ungültige Eingabe!!!");
                             break;
                     }
+
+                    loop = true;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"\nEin Fehler ist aufgetreten: {ex.Message}");
                 }
 
-                Console.Write("\nAndere Rename Option? Ja(1)/Nein(2): ");
-                int choice = Convert.ToInt32(Console.ReadLine());
+                if (loop == true)
+                {
+                    Console.Write("\nAndere Rename Option? Ja(1)/Nein(2): ");
+                    int choice = Convert.ToInt32(Console.ReadLine());
 
-                if (choice == 1)
-                {
-                    loopChoice = true;
-                }
-                else if (choice == 2)
-                {
-                    loopChoice = false;
+                    if (choice == 1)
+                    {
+                        loopChoice = true;
+                    }
+                    else if (choice == 2)
+                    {
+                        loopChoice = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nUngültige Auswahl. Programm wird beendet.");
+                        loopChoice = false;
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("\nUngültige Auswahl. Programm wird beendet.");
-                    loopChoice = false;
+                    loopChoice = false ;
                 }
             } while (loopChoice == true);
         }
